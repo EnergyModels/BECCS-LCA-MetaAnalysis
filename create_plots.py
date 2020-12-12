@@ -507,7 +507,7 @@ if plotFig5:
     # 1.5 column: 140 mm = 5.51 in
     # 2 column: 190 mm = 7.48 i
     width = 7.48  # inches
-    height = 7.5  # inches
+    height = 9.0  # inches
 
     # Create plot
     f, a = plt.subplots(3, len(facets), sharex='col', sharey='row')
@@ -594,15 +594,37 @@ if plotFig5:
                 ax.get_xaxis().set_ticks([])
 
             # Reduce number of y axis ticks
-            ax.yaxis.set_major_locator(plt.MaxNLocator(4))
+            # ax.set_yscale('symlog')
+            # if i==0:
+            #     ax.yaxis.set_major_locator(plt.MaxNLocator(6))
+            #     ax.set_ylim(top=2, bottom=-10.0)
+            # elif i == 1:
+            #     ax.yaxis.set_major_locator(plt.MaxNLocator(6))
+            #     ax.set_ylim(top=11, bottom=-11.0)
+            # else:
+            #     ax.yaxis.set_major_locator(plt.MaxNLocator(6))
+            #     ax.set_ylim(top=10.0, bottom=0.0)
+
+            if i == 0:
+                ax.set_yscale('symlog')
+                ax.yaxis.set_major_locator(plt.MaxNLocator(20))
+                ax.set_ylim(top=10.0, bottom=-10.0)
+            elif i == 1:
+                ax.set_yscale('symlog')
+                ax.yaxis.set_major_locator(plt.MaxNLocator(20))
+                ax.set_ylim(top=10, bottom=-10.0)
+            else:
+                ax.set_yscale('symlog')
+                ax.yaxis.set_major_locator(plt.MaxNLocator(5))
+                ax.set_ylim(top=10.0, bottom=0.0)
 
             # Despine and remove ticks
             if j == 0:
                 sns.despine(ax=ax, )
                 ax.tick_params(top=False, right=False)
             else:
-                sns.despine(ax=ax, left=True)
-                ax.tick_params(top=False, right=False, left=False)
+                sns.despine(ax=ax, left=False)
+                ax.tick_params(top=False, right=False)
 
     # Iterate through plant technologies
     patches = []
