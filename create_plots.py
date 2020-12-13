@@ -28,9 +28,11 @@ dpi = 1000
 context = "notebook"
 style = "whitegrid"
 colors = sns.color_palette("Paired")
+colors_alt = sns.color_palette("colorblind")
 
 captureTypes = ['None', 'Amine-based', 'Ammonia', 'CaL', 'CL', 'Membrane', 'Oxy-fuel', 'Selexol', 'SEWGS']
-capture_colors = [colors[0], colors[1], colors[2], colors[8], colors[4], colors[5], colors[6], colors[0], colors[7]]
+capture_colors = [colors_alt[0], colors_alt[0], colors_alt[1], colors_alt[2], colors_alt[3], colors_alt[4],
+                  colors_alt[5], colors_alt[7], colors_alt[9]]
 capture_markers = ['o', 'v', '^', '<', '>', '8', 's', 'p', '*', 'h', 'H', 'D', 'd', 'P', 'o', 'X']
 
 label_dict_capture = {'None': 'None', 'Amine-based': 'Amine-based', 'Ammonia': 'Ammonia', 'CaL': 'CaL', 'CL': 'CL',
@@ -66,6 +68,7 @@ df = df.transpose()
 df = df.drop(["VariableLabel", "Units"])
 
 df_smry = pd.read_csv('summary.csv')
+df_smry2 = pd.read_csv('summary2.csv')
 
 # ******************************
 # Plot 3
@@ -101,14 +104,14 @@ if plotFig3:
 
     # create inset
     # axins = zoomed_inset_axes(a, zoom=1.5, loc='lower right')
-    axins = zoomed_inset_axes(a, zoom=1.5, loc='lower right', bbox_to_anchor=(0.975, 0.1), bbox_transform=a.transAxes)
+    axins = zoomed_inset_axes(a, zoom=1.8, loc='lower right', bbox_to_anchor=(0.975, 0.1), bbox_transform=a.transAxes)
 
     sns.set_style("white", {"font.family": "serif", "font.serif": ["Times", "Palatino", "serif"]})
     sns.set_context("paper")
     sns.set_style("ticks", {"xtick.major.size": 8, "ytick.major.size": 8})
 
     PrePostOxys = ['Post', 'Pre', 'Oxy']
-    marker_fills = ['Y', 'N', 'N']
+    marker_fills = ['Y', 'N', 'Y']
     marker_size = 8
     markeredgewidth = 1.5
     elinewidth = 1.0
@@ -130,11 +133,11 @@ if plotFig3:
                 for PrePostOxy, marker_fill in zip(PrePostOxys, marker_fills):
                     # Select entries of interest
 
-                    if i==0:
+                    if i == 0:
                         df2 = df_smry[(df_smry.powerPlantType == plantType) & (df_smry.captureType1 == captureType)
                                       & (df_smry.PrePostOxy == PrePostOxy)]
                         # Convert
-                        if len(df2)>0:
+                        if len(df2) > 0:
                             x = float(df2.loc[:, x_var] * x_convert)
                             x_low = float(df2.loc[:, x_var_low] * x_convert)
                             x_hi = float(df2.loc[:, x_var_hi] * x_convert)
@@ -154,27 +157,39 @@ if plotFig3:
                             # ax.plot(x, y, linestyle='', marker=capture_marker, markersize=marker_size,
                             #         markeredgewidth=markeredgewidth, markeredgecolor=plant_color, markerfacecolor='None')
                             if marker_fill == 'Y':
-                                ax.errorbar(x, y, xerr=[[xerr_low], [xerr_hi]], yerr=[[yerr_low], [yerr_hi]], linestyle='',
-                                            marker=capture_marker, markersize=marker_size, markeredgewidth=markeredgewidth,
-                                            markeredgecolor=plant_color, markerfacecolor=plant_color, ecolor=plant_color,
+                                ax.errorbar(x, y, xerr=[[xerr_low], [xerr_hi]], yerr=[[yerr_low], [yerr_hi]],
+                                            linestyle='',
+                                            marker=capture_marker, markersize=marker_size,
+                                            markeredgewidth=markeredgewidth,
+                                            markeredgecolor=plant_color, markerfacecolor=plant_color,
+                                            ecolor=plant_color,
                                             elinewidth=elinewidth)
                             else:
-                                ax.errorbar(x, y, xerr=[[xerr_low], [xerr_hi]], yerr=[[yerr_low], [yerr_hi]], linestyle='',
-                                            marker=capture_marker, markersize=marker_size, markeredgewidth=markeredgewidth,
+                                ax.errorbar(x, y, xerr=[[xerr_low], [xerr_hi]], yerr=[[yerr_low], [yerr_hi]],
+                                            linestyle='',
+                                            marker=capture_marker, markersize=marker_size,
+                                            markeredgewidth=markeredgewidth,
                                             markeredgecolor=plant_color, markerfacecolor='None', ecolor=plant_color,
                                             elinewidth=elinewidth)
                             # print(str(plant_color))
                             # print(capture_marker)  # print(y)
 
                     else:
-                        df2 = df[(df.powerPlantType == plantType) & (df.captureType1 == captureType)]
+                        # df2 = df_smry[(df_smry.powerPlantType == plantType) & (df_smry.captureType1 == captureType)
+                        #               & (df_smry.PrePostOxy == PrePostOxy)]
+                        df2 = df[(df.powerPlantType == plantType) & (df.captureType1 == captureType)& (df.PrePostOxy == PrePostOxy)]
 
                         x = list(df2.loc[:, 'EROI'] * x_convert)
-                        y = list(df2.loc[:, 'GWP_total'] * y_convert/1000.0)
+                        y = list(df2.loc[:, 'GWP_total'] * y_convert / 1000.0)
 
                         # Plot Data
-                        ax.plot(x, y, linestyle='', marker=capture_marker, markersize=marker_size,
-                                markeredgewidth=markeredgewidth, markeredgecolor=plant_color, markerfacecolor='None')
+                        if marker_fill == 'Y':
+                            ax.plot(x, y, linestyle='', marker=capture_marker, markersize=marker_size,
+                                    markeredgewidth=markeredgewidth, markeredgecolor=plant_color, markerfacecolor=plant_color)
+                        else:
+                            ax.plot(x, y, linestyle='', marker=capture_marker, markersize=marker_size,
+                                    markeredgewidth=markeredgewidth, markeredgecolor=plant_color,
+                                    markerfacecolor='None')
 
         # Despine and remove ticks
         if i == 0:
@@ -200,10 +215,10 @@ if plotFig3:
 
         # Caption labels
         caption_labels = ['A', 'B', 'C', 'D', 'E', 'F']
-        if i==0:
+        if i == 0:
             ax.text(0.025, 0.975, caption_labels[i], horizontalalignment='center', verticalalignment='center',
-                transform=ax.transAxes, fontsize='medium', fontweight='bold')
-        elif i==1:
+                    transform=ax.transAxes, fontsize='medium', fontweight='bold')
+        elif i == 1:
             ax.text(0.05, 0.9, caption_labels[i], horizontalalignment='center', verticalalignment='center',
                     transform=ax.transAxes, fontsize='medium', fontweight='bold')
 
@@ -328,7 +343,7 @@ if plotFig4:
     sns.set_style("ticks", {"xtick.major.size": 8, "ytick.major.size": 8})
 
     PrePostOxys = ['Post', 'Pre', 'Oxy']
-    marker_fills = ['Y', 'N', 'N']
+    marker_fills = ['Y', 'N', 'Y']
     marker_size = 7
     markeredgewidth = 1.5
 
@@ -388,7 +403,7 @@ if plotFig4:
         EROI_breakeven = 1.0
         eff = 0.25
 
-        WU_switchgrass = 11.2388 / 1000.0 * 3.6 / eff # convert from cm^3 / MJ to l/kWh
+        WU_switchgrass = 11.2388 / 1000.0 * 3.6 / eff  # convert from cm^3 / MJ to l/kWh
         # WU_poplar = 5.1948 / 1000.0 * 3.6 / eff
         # WU_corn = 12.6939 / 1000.0 * 3.6 / eff
         # WU_forest_residue = 1.74298 / 1000.0 * 3.6 / eff # convert from cm^3 / MJ to l/kWh
@@ -408,7 +423,7 @@ if plotFig4:
                              facecolor="black",
                              alpha=0.1)
         ax.add_patch(rect)
-        ax.text((x_lims[1]-x_lims[0])/2.0, WU_switchgrass/2.0, 'Switchgrass Cultivation Water Use',
+        ax.text((x_lims[1] - x_lims[0]) / 2.0, WU_switchgrass / 2.0, 'Switchgrass Cultivation Water Use',
                 horizontalalignment='center', verticalalignment='center', rotation=0)
 
         # Labels
@@ -667,25 +682,35 @@ if plotFig6:
     # 1.5 column: 140 mm = 5.51 in
     # 2 column: 190 mm = 7.48 i
     width = 7.48  # inches
-    height = 5.0  # inches
+    height = 5.5  # inches
 
     dot_size = 50
     marker_size = 6
     markeredgewidth = 1.5
 
+    PrePostOxys = ['Post', 'Pre', 'Oxy']
+    marker_fills = ['Y', 'N', 'N']
+    marker_size = 8
+    markeredgewidth = 1.5
+    elinewidth = 1.0
+
     for i in range(3):
 
         if i == 0:
             # Y variable
-            y_var = 'GWP_total'
+            y_var = 'GWP_mean'
+            y_var_low = 'GWP_min'
+            y_var_hi = 'GWP_max'
             y_label = 'GWP (kg CO$_2$e/kwh)'
-            y_convert = [1.0 / 1000.0]
+            y_convert = [1.0]
             y_lims = [-3.500, 1.000]
             y_ticks = []
 
         elif i == 1:
             # Y variable
-            y_var = 'EROI'
+            y_var = 'EROI_mean'
+            y_var_low = 'EROI_min'
+            y_var_hi = 'EROI_max'
             y_label = 'EROI (-)'
             y_convert = [1.0]
             y_lims = [0, 20]
@@ -693,10 +718,11 @@ if plotFig6:
 
         else:
             # Y variable
-
-            y_var = "WU_total"
+            y_var = 'WU_mean'
+            y_var_low = 'WU_min'
+            y_var_hi = 'WU_max'
             y_label = "Water Use (l/kWh)"
-            y_convert = [1.0e-3]
+            y_convert = [1.0]
             y_lims = [0, 4.0]
             y_ticks = []
 
@@ -706,69 +732,116 @@ if plotFig6:
 
             if j == 0:
                 # X variable
-                x_var = 'effReduction'
+                x_var = 'effReduction_mean'
+                x_var_low = 'effReduction_min'
+                x_var_hi = 'effReduction_max'
                 x_label = 'Efficiency Reduction (%)'
                 x_convert = [1.0]
-                x_lims = []
+                x_lims = [0, 20]
                 x_ticks = []
 
             else:
                 # X variable
-                x_var = 'ccRate'
+                x_var = 'ccRate_mean'
+                x_var_low = 'ccRate_min'
+                x_var_hi = 'ccRate_max'
                 x_label = 'Capture Rate (%)'
                 x_convert = [1.0]
-                x_lims = []
+                x_lims = [75, 100]
                 x_ticks = []
 
             # Iterate through plant technologies
             for plantType, plant_color in zip(plantTypes[3:5], plant_colors[3:5]):
+
+                if plantType == 'Biomass (Steam)':
+                    marker_fill = 'N'
+                elif plantType == 'Biomass (IGCC)':
+                    marker_fill = 'Y'
 
                 # Iterate through capture technologies
                 for captureType, capture_color, capture_marker in zip(captureTypes[1:], capture_colors[1:],
                                                                       capture_markers[1:]):
 
                     # Select entries of interest
-                    df2 = df[(df.powerPlantType == plantType) & (df.captureType1 == captureType)]
-
+                    df2 = df_smry2[(df_smry2.powerPlantType == plantType) & (df_smry2.captureType1 == captureType)]
                     # Convert
-                    x = list(df2.loc[:, x_var] * x_convert)
-                    y = list(df2.loc[:, y_var] * y_convert)
+                    if len(df2) > 0:
+                        x = float(df2.loc[:, x_var] * x_convert)
+                        x_low = float(df2.loc[:, x_var_low] * x_convert)
+                        x_hi = float(df2.loc[:, x_var_hi] * x_convert)
 
-                    # Plot Data
-                    # ax.scatter(x, y, s=dot_size, c=[plant_color], marker=capture_marker)
+                        y = float(df2.loc[:, y_var] * y_convert)
+                        y_low = float(df2.loc[:, y_var_low] * y_convert)
+                        y_hi = float(df2.loc[:, y_var_hi] * y_convert)
 
-                    ax.plot(x, y, linestyle='', marker=capture_marker, markersize=marker_size,
-                            markeredgewidth=markeredgewidth, markeredgecolor=plant_color, markerfacecolor='None')
+                        # calculate error bars
+                        yerr_low = y - y_low
+                        yerr_hi = y_hi - y
 
-                    # Plot reference line
-                    # if i == 1 and j == 0:
-                    #     ax.plot([0, 20], [1.0, 1.0], 'k-')
-                    # if i == 1 and j == 0:
-                    #     ax.plot([0, 100], [1.0, 1.0],
-                    #             'k-')  # if len(x_lims) == 2:  #     ax.plot( x_lims, [1.0, 1.0], 'k-')  # else:  #     ax.plot([0, 20], [1.0, 1.0], 'k-')
+                        xerr_hi = x_hi - x
+                        xerr_low = x - x_low
 
-                    # X-axis Labels (Only bottom)
-                    if i == 2:
-                        ax.set_xlabel(x_label)
+                        # Plot Data
+                        if marker_fill == 'Y':
+                            ax.errorbar(x, y, xerr=[[xerr_low], [xerr_hi]], yerr=[[yerr_low], [yerr_hi]],
+                                        linestyle='',
+                                        marker=capture_marker, markersize=marker_size,
+                                        markeredgewidth=markeredgewidth,
+                                        markeredgecolor=capture_color, markerfacecolor=capture_color,
+                                        ecolor=capture_color,
+                                        elinewidth=elinewidth)
+                        else:
+                            ax.errorbar(x, y, xerr=[[xerr_low], [xerr_hi]], yerr=[[yerr_low], [yerr_hi]],
+                                        linestyle='',
+                                        marker=capture_marker, markersize=marker_size,
+                                        markeredgewidth=markeredgewidth,
+                                        markeredgecolor=capture_color, markerfacecolor='None', ecolor=capture_color,
+                                        elinewidth=elinewidth)
+                    # print(str(plant_color))
+                    # print(capture_marker)  # print(y)
 
-                    # Y-axis Labels (Only bottom)
-                    if j == 0:
-                        ax.set_ylabel(y_label)
+                # # Select entries of interest
+                # df2 = df[(df.powerPlantType == plantType) & (df.captureType1 == captureType)]
+                #
+                # # Convert
+                # x = list(df2.loc[:, x_var] * x_convert)
+                # y = list(df2.loc[:, y_var] * y_convert)
+                #
+                # # Plot Data
+                # # ax.scatter(x, y, s=dot_size, c=[plant_color], marker=capture_marker)
+                #
+                # ax.plot(x, y, linestyle='', marker=capture_marker, markersize=marker_size,
+                #         markeredgewidth=markeredgewidth, markeredgecolor=plant_color, markerfacecolor='None')
 
-                    # Axis Limits
-                    if len(x_lims) == 2:
-                        ax.set_xlim(left=x_lims[0], right=x_lims[1])
-                    if len(y_lims) == 2:
-                        ax.set_ylim(bottom=y_lims[0], top=y_lims[1])
+                # Plot reference line
+                # if i == 1 and j == 0:
+                #     ax.plot([0, 20], [1.0, 1.0], 'k-')
+                # if i == 1 and j == 0:
+                #     ax.plot([0, 100], [1.0, 1.0],
+                #             'k-')  # if len(x_lims) == 2:  #     ax.plot( x_lims, [1.0, 1.0], 'k-')  # else:  #     ax.plot([0, 20], [1.0, 1.0], 'k-')
 
-                    # if j == 0:
-                    sns.despine(ax=ax, )
-                    ax.tick_params(top=False,
-                                   right=False)  # else:  #     sns.despine(ax=ax, left=True)  #     ax.tick_params(top=False, right=False, left=False)
+                # X-axis Labels (Only bottom)
+                if i == 2:
+                    ax.set_xlabel(x_label)
 
-                    # plt.tick_params(axis='x',  # changes apply to the x-axis  #                 which='both',  # both major and minor ticks are affected  #                 bottom=True,  # ticks along the bottom edge are off  #                 top=False,  # ticks along the top edge are off  #                 labelbottom=True)
+                # Y-axis Labels (Only bottom)
+                if j == 0:
+                    ax.set_ylabel(y_label)
 
-                # Caption labels  # caption_labels = ['A', 'B', 'C', 'D', 'E', 'F']  # plt.text(0.1, 0.9, caption_labels[idx], horizontalalignment='center', verticalalignment='center',  #          transform=ax.transAxes, fontsize='medium', fontweight='bold')
+                # Axis Limits
+                if len(x_lims) == 2:
+                    ax.set_xlim(left=x_lims[0], right=x_lims[1])
+                if len(y_lims) == 2:
+                    ax.set_ylim(bottom=y_lims[0], top=y_lims[1])
+
+                # if j == 0:
+                sns.despine(ax=ax, )
+                ax.tick_params(top=False,
+                               right=False)  # else:  #     sns.despine(ax=ax, left=True)  #     ax.tick_params(top=False, right=False, left=False)
+
+                # plt.tick_params(axis='x',  # changes apply to the x-axis  #                 which='both',  # both major and minor ticks are affected  #                 bottom=True,  # ticks along the bottom edge are off  #                 top=False,  # ticks along the top edge are off  #                 labelbottom=True)
+
+            # Caption labels  # caption_labels = ['A', 'B', 'C', 'D', 'E', 'F']  # plt.text(0.1, 0.9, caption_labels[idx], horizontalalignment='center', verticalalignment='center',  #          transform=ax.transAxes, fontsize='medium', fontweight='bold')
 
     # Set size
     f = plt.gcf()
@@ -776,9 +849,13 @@ if plotFig6:
 
     # Legend
     # Iterate through plant technologies
-    patches = []
-    for plantType, plant_color in zip(plantTypes[3:5], plant_colors[3:5]):
-        patches.append(mpatches.Patch(color=plant_color, label=label_dict[plantType]))
+    # patches = []
+    # Pre/Post
+    patches = [mpatches.Patch(edgecolor='black', facecolor='None', label=label_dict[plantTypes[3]]),
+               mpatches.Patch(edgecolor='black', facecolor='black', label=label_dict[plantTypes[4]])]
+    # leg3 = a.legend(handles=patches2, bbox_to_anchor=(0.65, -0.11), loc="upper left", title='Capture Type')
+    # for plantType, plant_color in zip(plantTypes[3:5], plant_colors[3:5]):
+    #     patches.append(mpatches.Patch(color=plant_color, label=label_dict[plantType]))
 
     leg1 = a[0, 1].legend(handles=patches, bbox_to_anchor=(1.0, 0.0), loc="center left", title='Power Plants')
 
@@ -787,7 +864,7 @@ if plotFig6:
     for captureType, capture_color, capture_marker in zip(captureTypes[1:], capture_colors[1:], capture_markers[1:]):
         # symbols.append(mlines.Line2D([], [], color='black', linestyle='', marker=capture_marker, markersize=10,
         #                              label=label_dict_capture[captureType]))
-        symbols.append(mlines.Line2D([], [], color='black', linestyle='', marker=capture_marker, markersize=9,
+        symbols.append(mlines.Line2D([], [], color=capture_color, linestyle='', marker=capture_marker, markersize=9,
                                      markerfacecolor='None', markeredgewidth=1.5,
                                      label=label_dict_capture[captureType]))
     leg2 = a[1, 1].legend(handles=symbols, bbox_to_anchor=(1.0, 0.0), loc="center left", title='Capture Type')

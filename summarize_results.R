@@ -32,7 +32,8 @@ df$GWP_total <- as.numeric(as.character(df$GWP_total))
 df$EROI <- as.numeric(as.character(df$EROI))
 df$WU_total <- as.numeric(as.character(df$WU_total))
 df$EU_total <- as.numeric(as.character(df$EU_total))
-
+df$effReduction <- as.numeric(as.character(df$effReduction))
+df$ccRate <- as.numeric(as.character(df$ccRate))
 
 # Summarise data
 df_smry <- df %>% # the names of the new data frame and the data frame to be summarised
@@ -50,6 +51,12 @@ df_smry <- df %>% # the names of the new data frame and the data frame to be sum
             EU_min = min(EU_total),
             EU_mean = mean(EU_total),
             EU_max = max(EU_total),
+            effReduction_min = min(effReduction),
+            effReduction_mean = mean(effReduction),
+            effReduction_max = max(effReduction),
+            ccRate_min = min(ccRate),
+            ccRate_mean = mean(ccRate),
+            ccRate_max = max(ccRate),
             )
 
 # Convert from g to kg
@@ -64,3 +71,45 @@ df_smry$WU_max <- df_smry$WU_max / 1000.0
 
 # save data
 write.csv(df_smry, "summary.csv")
+
+
+#==================
+# Secondary summary - plant type + capture type, not distinquishing between pre/post
+#==================
+
+# Summarise data
+df_smry2 <- df %>% # the names of the new data frame and the data frame to be summarised
+  group_by(.dots=c("powerPlantType","captureType1")) %>%   # the grouping variable
+  summarise(count=n(), # counts number of entries
+            GWP_min = min(GWP_total), # calculates the minimum
+            GWP_mean = mean(GWP_total),  # calculates the mean
+            GWP_max = max(GWP_total),# calculates the maximum
+            EROI_min = min(EROI),
+            EROI_mean = mean(EROI),
+            EROI_max = max(EROI),
+            WU_min = min(WU_total),
+            WU_mean = mean(WU_total),
+            WU_max = max(WU_total),
+            EU_min = min(EU_total),
+            EU_mean = mean(EU_total),
+            EU_max = max(EU_total),
+            effReduction_min = min(effReduction),
+            effReduction_mean = mean(effReduction),
+            effReduction_max = max(effReduction),
+            ccRate_min = min(ccRate),
+            ccRate_mean = mean(ccRate),
+            ccRate_max = max(ccRate),
+  )
+
+# Convert from g to kg
+df_smry2$GWP_min <- df_smry$GWP_min / 1000.0
+df_smry2$GWP_mean <- df_smry$GWP_mean / 1000.0
+df_smry2$GWP_max <- df_smry$GWP_max / 1000.0
+
+# Convert from cm^3 to l
+df_smry2$WU_min <- df_smry$WU_min / 1000.0
+df_smry2$WU_mean <- df_smry$WU_mean / 1000.0
+df_smry2$WU_max <- df_smry$WU_max / 1000.0
+
+# save data
+write.csv(df_smry, "summary2.csv")
