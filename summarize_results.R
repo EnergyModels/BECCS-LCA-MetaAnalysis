@@ -102,14 +102,14 @@ df_smry2 <- df %>% # the names of the new data frame and the data frame to be su
   )
 
 # Convert from g to kg
-df_smry2$GWP_min <- df_smry$GWP_min / 1000.0
-df_smry2$GWP_mean <- df_smry$GWP_mean / 1000.0
-df_smry2$GWP_max <- df_smry$GWP_max / 1000.0
+df_smry2$GWP_min <- df_smry2$GWP_min / 1000.0
+df_smry2$GWP_mean <- df_smry2$GWP_mean / 1000.0
+df_smry2$GWP_max <- df_smry2$GWP_max / 1000.0
 
 # Convert from cm^3 to l
-df_smry2$WU_min <- df_smry$WU_min / 1000.0
-df_smry2$WU_mean <- df_smry$WU_mean / 1000.0
-df_smry2$WU_max <- df_smry$WU_max / 1000.0
+df_smry2$WU_min <- df_smry2$WU_min / 1000.0
+df_smry2$WU_mean <- df_smry2$WU_mean / 1000.0
+df_smry2$WU_max <- df_smry2$WU_max / 1000.0
 
 # save data
-write.csv(df_smry, "summary2.csv")
+write.csv(df_smry2, "summary2.csv")
