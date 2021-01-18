@@ -177,7 +177,8 @@ if plotFig3:
                     else:
                         # df2 = df_smry[(df_smry.powerPlantType == plantType) & (df_smry.captureType1 == captureType)
                         #               & (df_smry.PrePostOxy == PrePostOxy)]
-                        df2 = df[(df.powerPlantType == plantType) & (df.captureType1 == captureType)& (df.PrePostOxy == PrePostOxy)]
+                        df2 = df[(df.powerPlantType == plantType) & (df.captureType1 == captureType) & (
+                                df.PrePostOxy == PrePostOxy)]
 
                         x = list(df2.loc[:, 'EROI'] * x_convert)
                         y = list(df2.loc[:, 'GWP_total'] * y_convert / 1000.0)
@@ -185,7 +186,8 @@ if plotFig3:
                         # Plot Data
                         if marker_fill == 'Y':
                             ax.plot(x, y, linestyle='', marker=capture_marker, markersize=marker_size,
-                                    markeredgewidth=markeredgewidth, markeredgecolor=plant_color, markerfacecolor=plant_color)
+                                    markeredgewidth=markeredgewidth, markeredgecolor=plant_color,
+                                    markerfacecolor=plant_color)
                         else:
                             ax.plot(x, y, linestyle='', marker=capture_marker, markersize=marker_size,
                                     markeredgewidth=markeredgewidth, markeredgecolor=plant_color,
@@ -868,6 +870,29 @@ if plotFig6:
                                      markerfacecolor='None', markeredgewidth=1.5,
                                      label=label_dict_capture[captureType]))
     leg2 = a[1, 1].legend(handles=symbols, bbox_to_anchor=(1.0, 0.0), loc="center left", title='Capture Type')
+
+    # Reference arrows
+    # common
+    frac = 0.3
+    y = 0.75
+    width = 0.08
+
+    # efficiency reduction
+    xmin = 0.0
+    xmax = 20.0
+    xmid = (xmin + xmax) / 2.0
+    length = frac * (xmax - xmin)
+    a[2, 0].arrow(x=xmid + 0.5 * length, y=y, dx=-length, dy=0.0, width=width, color='black')
+    a[2, 0].text(0.5, 0.1, 'Better', horizontalalignment='center', verticalalignment='center',
+                 rotation=0, transform=a[2, 0].transAxes)
+
+    xmin = 75
+    xmax = 100
+    xmid = (xmin + xmax) / 2.0
+    length = frac * (xmax - xmin)
+    a[2, 1].arrow(x=xmid - 0.5 * length, y=y, dx=length, dy=0.0, width=width, color='black')
+    a[2, 1].text(0.5, 0.1, 'Better', horizontalalignment='center', verticalalignment='center',
+                 rotation=0, transform=a[2, 1].transAxes)
 
     # Save figure
     plt.tight_layout()
