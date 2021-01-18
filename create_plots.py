@@ -883,7 +883,7 @@ if plotFig6:
     xmid = (xmin + xmax) / 2.0
     length = frac * (xmax - xmin)
     a[2, 0].arrow(x=xmid + 0.5 * length, y=y, dx=-length, dy=0.0, width=width, color='black')
-    a[2, 0].text(0.5, 0.1, 'Better', horizontalalignment='center', verticalalignment='center',
+    a[2, 0].text(0.5, 0.1, 'Ideal', horizontalalignment='center', verticalalignment='center',
                  rotation=0, transform=a[2, 0].transAxes)
 
     xmin = 75
@@ -891,7 +891,7 @@ if plotFig6:
     xmid = (xmin + xmax) / 2.0
     length = frac * (xmax - xmin)
     a[2, 1].arrow(x=xmid - 0.5 * length, y=y, dx=length, dy=0.0, width=width, color='black')
-    a[2, 1].text(0.5, 0.1, 'Better', horizontalalignment='center', verticalalignment='center',
+    a[2, 1].text(0.5, 0.1, 'Ideal', horizontalalignment='center', verticalalignment='center',
                  rotation=0, transform=a[2, 1].transAxes)
 
     # Save figure
