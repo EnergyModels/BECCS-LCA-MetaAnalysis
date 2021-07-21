@@ -424,9 +424,9 @@ if plotFig4:
         rect = plt.Rectangle((x_lims[0], 0.0), x_lims[1] - x_lims[0], WU_switchgrass,
                              facecolor="black",
                              alpha=0.1)
-        ax.add_patch(rect)
-        ax.text((x_lims[1] - x_lims[0]) / 2.0, WU_switchgrass / 2.0, 'Switchgrass Cultivation Water Use',
-                horizontalalignment='center', verticalalignment='center', rotation=0)
+        # ax.add_patch(rect)
+        # ax.text((x_lims[1] - x_lims[0]) / 2.0, WU_switchgrass / 2.0, 'Switchgrass Cultivation Water Use',
+        #         horizontalalignment='center', verticalalignment='center', rotation=0)
 
         # Labels
         ax.set_xlabel(x_label)
